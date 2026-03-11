@@ -27,7 +27,7 @@ class WebHawkAccessibilityService : AccessibilityService() {
         private val _serviceRunning = MutableStateFlow(false)
         val serviceRunning: StateFlow<Boolean> = _serviceRunning.asStateFlow()
 
-        // Known address-bar view IDs in Chromium browsers
+        // Known address-bar view IDs across browsers
         private val ADDRESS_BAR_IDS = setOf(
             "com.android.chrome:id/url_bar",
             "org.chromium.chrome:id/url_bar",
@@ -37,7 +37,32 @@ class WebHawkAccessibilityService : AccessibilityService() {
             "com.microsoft.emmx:id/url_bar",
             "com.brave.browser:id/url_bar",
             "com.opera.browser:id/url_bar",
-            "com.opera.mini.native:id/url_bar"
+            "com.opera.mini.native:id/url_bar",
+            // Firefox
+            "org.mozilla.firefox:id/mozac_browser_toolbar_url_view",
+            "org.mozilla.fenix:id/mozac_browser_toolbar_url_view",
+            // Samsung Internet
+            "com.sec.android.app.sbrowser:id/location_bar_edit_text",
+            // Kiwi
+            "com.kiwibrowser.browser:id/url_bar"
+        )
+
+        // Browser packages whose accessibility events we care about.
+        // Events from all other packages are discarded immediately.
+        val BROWSER_PACKAGES = setOf(
+            "com.android.chrome",
+            "org.chromium.chrome",
+            "com.chrome.beta",
+            "com.chrome.dev",
+            "com.chrome.canary",
+            "com.microsoft.emmx",
+            "com.brave.browser",
+            "com.opera.browser",
+            "com.opera.mini.native",
+            "org.mozilla.firefox",
+            "org.mozilla.fenix",
+            "com.sec.android.app.sbrowser",
+            "com.kiwibrowser.browser"
         )
     }
 
@@ -47,7 +72,8 @@ class WebHawkAccessibilityService : AccessibilityService() {
         super.onServiceConnected()
         val info = AccessibilityServiceInfo().apply {
             eventTypes = AccessibilityEvent.TYPE_WINDOW_CONTENT_CHANGED or
-                         AccessibilityEvent.TYPE_WINDOW_STATE_CHANGED
+                         AccessibilityEvent.TYPE_WINDOW_STATE_CHANGED or
+                         AccessibilityEvent.TYPE_VIEW_TEXT_CHANGED
             feedbackType = AccessibilityServiceInfo.FEEDBACK_GENERIC
             flags = AccessibilityServiceInfo.FLAG_REPORT_VIEW_IDS or
                     AccessibilityServiceInfo.FLAG_RETRIEVE_INTERACTIVE_WINDOWS
@@ -60,21 +86,57 @@ class WebHawkAccessibilityService : AccessibilityService() {
 
     override fun onAccessibilityEvent(event: AccessibilityEvent?) {
         event ?: return
-        val root = rootInActiveWindow ?: return
+        // Ignore events from non-browser apps (performance + correctness)
+        val pkg = event.packageName?.toString() ?: return
+        if (!BROWSER_PACKAGES.contains(pkg)) return
 
+        val url = findUrlInBrowserWindows(pkg) ?: return
+        if (!isValidUrl(url) || url == lastEmittedUrl) return
+
+        val entry = UrlEntry(url = url, timestamp = System.currentTimeMillis())
+        Log.d(TAG, "URL change detected: $url  (pkg=$pkg, eventType=${event.eventType})")
+        lastEmittedUrl = url
+        _urlStream.value = entry
+    }
+
+    /**
+     * Locates the URL bar in [targetPkg]'s window.
+     *
+     * Fast path: the browser is the currently active window — use [rootInActiveWindow].
+     * Slow path: iterate all interactive windows so URL changes are not missed during
+     * the brief period when Chrome is transitioning from background to foreground
+     * (the app just launched it via Intent but the window focus delta hasn't settled).
+     */
+    private fun findUrlInBrowserWindows(targetPkg: String): String? {
+        // Fast path
+        rootInActiveWindow?.let { root ->
+            try {
+                if (root.packageName?.toString() == targetPkg) {
+                    val url = extractUrlFromTree(root)
+                    if (url != null) return url
+                }
+            } finally {
+                root.recycle()
+            }
+        }
+        // Slow path — scan all interactive windows
         try {
-            val url = extractUrlFromTree(root)
-            if (url != null && isValidUrl(url)) {
-                if (url != lastEmittedUrl) {
-                    val entry = UrlEntry(url = url, timestamp = System.currentTimeMillis())
-                    Log.d(TAG, "URL change detected: $url  (pkg=${event.packageName})")
-                    lastEmittedUrl = url
-                    _urlStream.value = entry
+            val allWindows = windows ?: return null
+            for (window in allWindows) {
+                val root = window.root ?: continue
+                try {
+                    if (root.packageName?.toString() == targetPkg) {
+                        val url = extractUrlFromTree(root)
+                        if (url != null) return url
+                    }
+                } finally {
+                    root.recycle()
                 }
             }
-        } finally {
-            root.recycle()
+        } catch (e: Exception) {
+            Log.w(TAG, "findUrlInBrowserWindows: window access error — ${e.message}")
         }
+        return null
     }
 
     private fun extractUrlFromTree(root: AccessibilityNodeInfo): String? {

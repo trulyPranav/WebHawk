@@ -46,6 +46,8 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
 
     private var lastRiskResult: RiskResult? = null
     private var lastCheckedUrl: String = ""
+    /** Exposed so MainActivity can open the URL in the browser after tracking starts. */
+    val currentScanUrl: String get() = lastCheckedUrl
 
     // FIX Bug 3: hold a reference so we can cancel the old collector before starting a new scan.
     // Without this, every call to startLiveTracking() piles up an additional collector on
