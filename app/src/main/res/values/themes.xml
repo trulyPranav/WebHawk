@@ -34,7 +34,6 @@
         <item name="colorPrimary">@color/accent</item>
     </style>
 
-    <!-- ---- Widget styles ---- -->
 
     <style name="Widget.WebHawk.Card" parent="Widget.Material3.CardView.Elevated">
         <item name="cardBackgroundColor">@color/bg_card</item>
