@@ -4,6 +4,7 @@ import android.app.Application
 import com.google.firebase.FirebaseApp
 import com.webhawk.detector.data.repository.AuthRepository
 import com.webhawk.detector.data.repository.FlagRepository
+import com.webhawk.detector.engine.RedirectResolver
 import com.webhawk.detector.service.UrlChangeLogger
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -16,6 +17,7 @@ class WebHawkApp : Application() {
     val authRepository by lazy { AuthRepository() }
     val flagRepository by lazy { FlagRepository() }
     val urlChangeLogger by lazy { UrlChangeLogger(appScope) }
+    val redirectResolver by lazy { RedirectResolver() }
 
     override fun onCreate() {
         super.onCreate()

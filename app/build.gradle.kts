@@ -86,6 +86,9 @@ dependencies {
     // Shimmer
     implementation(libs.shimmer)
 
+    // HTTP client for network-based redirect resolution
+    implementation(libs.okhttp)
+
     // Test
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)

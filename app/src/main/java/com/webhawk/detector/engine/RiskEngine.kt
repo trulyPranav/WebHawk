@@ -32,10 +32,10 @@ object RiskEngine {
     private const val BLEND_LOCAL  = 0.7
     private const val BLEND_GLOBAL = 0.3
 
-    private const val LOW_THRESHOLD      = 2.0
-    private const val MEDIUM_THRESHOLD   = 5.0
-    private const val HIGH_THRESHOLD     = 8.0
-    private const val CRITICAL_THRESHOLD = 12.0
+    private const val LOW_THRESHOLD      = 1.0
+    private const val MEDIUM_THRESHOLD   = 2.0
+    private const val HIGH_THRESHOLD     = 3.0
+    private const val CRITICAL_THRESHOLD = 4.0
 
     fun computeLocalScore(features: RiskFeatures): Double {
         val score = (W_REDIRECT  * features.redirectCount) +

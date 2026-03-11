@@ -1,9 +1,7 @@
 package com.webhawk.detector.ui.main
 
 import android.content.Intent
-import android.net.Uri
 import android.os.Bundle
-import android.util.Log
 import android.provider.Settings
 import android.view.View
 import android.view.inputmethod.EditorInfo
@@ -26,16 +24,8 @@ import com.webhawk.detector.ui.result.ResultBottomSheet
 import kotlinx.coroutines.launch
 
 class MainActivity : AppCompatActivity() {
-
-    companion object {
-        private const val TAG = "WebHawk.Main"
-    }
-
     private lateinit var binding: ActivityMainBinding
     private val viewModel: MainViewModel by viewModels()
-    // Prevents re-launching the browser when the Activity resumes from background
-    // and repeatOnLifecycle replays the current Tracking state via StateFlow.
-    private var browserLaunchedForCurrentScan = false
 
     private val authLauncher = registerForActivityResult(
         ActivityResultContracts.StartActivityForResult()
@@ -121,9 +111,7 @@ class MainActivity : AppCompatActivity() {
         binding.btnReset.isVisible = false
 
         when (state) {
-            is ScanUiState.Idle -> {
-                browserLaunchedForCurrentScan = false
-            }
+            is ScanUiState.Idle -> { /* nothing — default clean state */ }
 
             is ScanUiState.CheckingDatabase -> {
                 binding.cardStatus.isVisible = true
@@ -140,24 +128,6 @@ class MainActivity : AppCompatActivity() {
                 binding.tvStatusLabel.text = getString(R.string.monitoring_redirects)
                 binding.progressStatus.isVisible = true
                 binding.btnStopScan.isVisible = true
-                // CRITICAL: open the URL in the browser so the AccessibilityService can
-                // observe the actual navigation chain. Without this, Chrome never navigates
-                // and no accessibility events fire — redirects are invisible to the service.
-                // The flag prevents re-launching when the Activity re-collects on resume.
-                if (!browserLaunchedForCurrentScan) {
-                    browserLaunchedForCurrentScan = true
-                    val urlToScan = viewModel.currentScanUrl
-                    if (urlToScan.isNotBlank()) {
-                        try {
-                            startActivity(
-                                Intent(Intent.ACTION_VIEW, Uri.parse(urlToScan))
-                                    .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
-                            )
-                        } catch (e: Exception) {
-                            Log.w(TAG, "Could not launch browser for: $urlToScan — ${e.message}")
-                        }
-                    }
-                }
             }
 
             is ScanUiState.Analyzing -> {
