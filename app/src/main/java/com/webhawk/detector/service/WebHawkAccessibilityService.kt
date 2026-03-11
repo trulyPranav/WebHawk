@@ -3,6 +3,7 @@ package com.webhawk.detector.service
 import android.accessibilityservice.AccessibilityService
 import android.accessibilityservice.AccessibilityServiceInfo
 import android.content.Intent
+import android.util.Log
 import android.view.accessibility.AccessibilityEvent
 import android.view.accessibility.AccessibilityNodeInfo
 import com.webhawk.detector.data.model.UrlEntry
@@ -18,6 +19,8 @@ import kotlinx.coroutines.flow.asStateFlow
 class WebHawkAccessibilityService : AccessibilityService() {
 
     companion object {
+        private const val TAG = "WebHawk.A11y"
+
         private val _urlStream = MutableStateFlow<UrlEntry?>(null)
         val urlStream: StateFlow<UrlEntry?> = _urlStream.asStateFlow()
 
@@ -52,6 +55,7 @@ class WebHawkAccessibilityService : AccessibilityService() {
         }
         serviceInfo = info
         _serviceRunning.value = true
+        Log.i(TAG, "AccessibilityService connected")
     }
 
     override fun onAccessibilityEvent(event: AccessibilityEvent?) {
@@ -60,12 +64,13 @@ class WebHawkAccessibilityService : AccessibilityService() {
 
         try {
             val url = extractUrlFromTree(root)
-            if (url != null && url != lastEmittedUrl && isValidUrl(url)) {
-                lastEmittedUrl = url
-                _urlStream.value = UrlEntry(
-                    url = url,
-                    timestamp = System.currentTimeMillis()
-                )
+            if (url != null && isValidUrl(url)) {
+                if (url != lastEmittedUrl) {
+                    val entry = UrlEntry(url = url, timestamp = System.currentTimeMillis())
+                    Log.d(TAG, "URL change detected: $url  (pkg=${event.packageName})")
+                    lastEmittedUrl = url
+                    _urlStream.value = entry
+                }
             }
         } finally {
             root.recycle()
@@ -129,10 +134,12 @@ class WebHawkAccessibilityService : AccessibilityService() {
     }
 
     override fun onInterrupt() {
+        Log.w(TAG, "AccessibilityService interrupted")
         _serviceRunning.value = false
     }
 
     override fun onUnbind(intent: Intent?): Boolean {
+        Log.i(TAG, "AccessibilityService unbound")
         _serviceRunning.value = false
         lastEmittedUrl = ""
         return super.onUnbind(intent)
