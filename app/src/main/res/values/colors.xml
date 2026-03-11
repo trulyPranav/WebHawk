@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Backgrounds -->
+    <color name="bg_primary">#0F0F13</color>
+    <color name="bg_surface">#17171E</color>
+    <color name="bg_card">#1E1E28</color>
+    <color name="bg_inner">#242430</color>
+
+    <!-- Text -->
+    <color name="text_primary">#F0F0F5</color>
+    <color name="text_secondary">#8888A0</color>
+
+    <!-- Accent -->
+    <color name="accent">#7C5CFC</color>
+    <color name="accent_dark">#5A3ECC</color>
+
+    <!-- Risk levels -->
+    <color name="risk_safe">#4CAF50</color>
+    <color name="risk_low">#8BC34A</color>
+    <color name="risk_medium">#FFC107</color>
+    <color name="risk_high">#FF5722</color>
+    <color name="risk_critical">#F44336</color>
+
+    <!-- Divider -->
+    <color name="divider">#2A2A38</color>
+
+    <!-- Transparent -->
+    <color name="transparent">#00000000</color>
+
+    <!-- Status bar -->
+    <color name="status_bar">#0F0F13</color>
+</resources>

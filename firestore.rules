@@ -1,0 +1,48 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    // Users can only read/write their own profile
+    match /users/{userId} {
+      allow read: if request.auth != null && request.auth.uid == userId;
+      allow create: if request.auth != null && request.auth.uid == userId;
+      allow update: if request.auth != null && request.auth.uid == userId
+                    // Users cannot elevate their own trust score or admin status
+                    && !request.resource.data.diff(resource.data).affectedKeys()
+                       .hasAny(['trustScore', 'isAdmin', 'validatedFlagCount']);
+    }
+
+    // Admins can read all user profiles
+    match /users/{userId} {
+      allow read: if request.auth != null
+                  && get(/databases/$(database)/documents/users/$(request.auth.uid)).data.isAdmin == true;
+    }
+
+    // Flagged URLs: anyone can read, authenticated users can create/update
+    match /flagged_urls/{urlId} {
+      allow read: if true;
+      allow create: if request.auth != null
+                    && request.resource.data.flagCount == 1
+                    && request.resource.data.validatedFlag == false;
+      allow update: if request.auth != null
+                    // Only increment allowed fields
+                    && request.resource.data.diff(resource.data).affectedKeys()
+                       .hasOnly(['flagCount', 'weightedScore', 'updatedAt', 'validatedFlag'])
+                    // Admins only for validatedFlag
+                    && (
+                         !request.resource.data.diff(resource.data).affectedKeys().hasAny(['validatedFlag'])
+                         || get(/databases/$(database)/documents/users/$(request.auth.uid)).data.isAdmin == true
+                       );
+    }
+
+    // User flags: owner can read their own, admins can read all
+    match /user_flags/{flagId} {
+      allow create: if request.auth != null
+                    && request.resource.data.userId == request.auth.uid;
+      allow read: if request.auth != null && (
+                    resource.data.userId == request.auth.uid
+                    || get(/databases/$(database)/documents/users/$(request.auth.uid)).data.isAdmin == true
+                  );
+    }
+  }
+}

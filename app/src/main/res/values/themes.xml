@@ -1,0 +1,114 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources xmlns:tools="http://schemas.android.com/tools">
+
+    <!-- Base app theme -->
+    <style name="Theme.WebHawk" parent="Theme.Material3.Dark.NoActionBar">
+        <item name="colorPrimary">@color/accent</item>
+        <item name="colorPrimaryVariant">@color/accent_dark</item>
+        <item name="colorOnPrimary">@color/text_primary</item>
+        <item name="colorSurface">@color/bg_surface</item>
+        <item name="colorOnSurface">@color/text_primary</item>
+        <item name="android:colorBackground">@color/bg_primary</item>
+        <item name="android:statusBarColor">@color/status_bar</item>
+        <item name="android:navigationBarColor">@color/bg_primary</item>
+        <item name="android:windowLightStatusBar" tools:targetApi="m">false</item>
+        <item name="android:fontFamily">@font/inter_regular</item>
+    </style>
+
+    <!-- Splash -->
+    <style name="Theme.WebHawk.Splash" parent="Theme.WebHawk">
+        <item name="android:windowBackground">@color/bg_primary</item>
+    </style>
+
+    <!-- Dialog -->
+    <style name="Theme.WebHawk.Dialog" parent="ThemeOverlay.Material3.MaterialAlertDialog">
+        <item name="android:colorBackground">@color/bg_surface</item>
+        <item name="colorOnSurface">@color/text_primary</item>
+        <item name="colorPrimary">@color/accent</item>
+    </style>
+
+    <!-- Bottom Sheet -->
+    <style name="Theme.WebHawk.BottomSheet" parent="Theme.Material3.Dark.BottomSheetDialog">
+        <item name="android:colorBackground">@color/bg_surface</item>
+        <item name="colorOnSurface">@color/text_primary</item>
+        <item name="colorPrimary">@color/accent</item>
+    </style>
+
+    <!-- ---- Widget styles ---- -->
+
+    <style name="Widget.WebHawk.Card" parent="Widget.Material3.CardView.Elevated">
+        <item name="cardBackgroundColor">@color/bg_card</item>
+        <item name="cardElevation">0dp</item>
+        <item name="cardCornerRadius">16dp</item>
+        <item name="strokeColor">@color/divider</item>
+        <item name="strokeWidth">1dp</item>
+    </style>
+
+    <style name="Widget.WebHawk.Card.Inner">
+        <item name="cardBackgroundColor">@color/bg_inner</item>
+        <item name="cardCornerRadius">12dp</item>
+        <item name="strokeWidth">0dp</item>
+    </style>
+
+    <style name="Widget.WebHawk.Card.Warning">
+        <item name="cardBackgroundColor">@color/bg_card</item>
+        <item name="cardCornerRadius">16dp</item>
+        <item name="strokeColor">#FF572240</item>
+        <item name="strokeWidth">1dp</item>
+    </style>
+
+    <style name="Widget.WebHawk.Button.Primary" parent="Widget.Material3.Button">
+        <item name="backgroundTint">@color/accent</item>
+        <item name="android:textColor">@color/text_primary</item>
+        <item name="cornerRadius">12dp</item>
+        <item name="android:paddingVertical">14dp</item>
+        <item name="android:textSize">15sp</item>
+        <item name="android:fontFamily">@font/inter_semibold</item>
+    </style>
+
+    <style name="Widget.WebHawk.Button.Outlined" parent="Widget.Material3.Button.OutlinedButton">
+        <item name="strokeColor">@color/accent</item>
+        <item name="android:textColor">@color/accent</item>
+        <item name="cornerRadius">10dp</item>
+        <item name="android:textSize">13sp</item>
+    </style>
+
+    <style name="Widget.WebHawk.Button.Destructive" parent="Widget.Material3.Button">
+        <item name="backgroundTint">@color/bg_inner</item>
+        <item name="android:textColor">@color/risk_high</item>
+        <item name="cornerRadius">12dp</item>
+        <item name="android:paddingVertical">14dp</item>
+        <item name="strokeColor">@color/risk_high</item>
+        <item name="strokeWidth">1dp</item>
+    </style>
+
+    <style name="Widget.WebHawk.Button.Text" parent="Widget.Material3.Button.TextButton">
+        <item name="android:textColor">@color/text_secondary</item>
+        <item name="android:textSize">13sp</item>
+    </style>
+
+    <style name="Widget.WebHawk.TextInputLayout" parent="Widget.Material3.TextInputLayout.OutlinedBox">
+        <item name="boxBackgroundColor">@color/bg_inner</item>
+        <item name="boxStrokeColor">@color/divider</item>
+        <item name="boxCornerRadiusTopStart">12dp</item>
+        <item name="boxCornerRadiusTopEnd">12dp</item>
+        <item name="boxCornerRadiusBottomStart">12dp</item>
+        <item name="boxCornerRadiusBottomEnd">12dp</item>
+        <item name="hintTextColor">@color/text_secondary</item>
+        <item name="android:textColorHint">@color/text_secondary</item>
+    </style>
+
+    <style name="Widget.WebHawk.TextInputLayout.Password" parent="Widget.WebHawk.TextInputLayout">
+        <item name="endIconTint">@color/text_secondary</item>
+    </style>
+
+    <style name="Widget.WebHawk.Chip" parent="Widget.Material3.Chip.Assist">
+        <item name="chipBackgroundColor">@color/bg_card</item>
+        <item name="android:textColor">@color/text_secondary</item>
+        <item name="chipStrokeColor">@color/divider</item>
+        <item name="chipStrokeWidth">1dp</item>
+        <item name="chipIconTint">@color/text_secondary</item>
+        <item name="chipCornerRadius">20dp</item>
+    </style>
+
+</resources>

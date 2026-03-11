@@ -1,0 +1,4 @@
+# google-services.json
+# Place your downloaded google-services.json from Firebase Console here.
+# Download it from: Firebase Console → Project Settings → Your Android app → Download google-services.json
+# This file is gitignored and must never be committed (contains API keys).

@@ -1,0 +1,29 @@
+{
+  "indexes": [
+    {
+      "collectionGroup": "flagged_urls",
+      "queryScope": "COLLECTION",
+      "fields": [
+        { "fieldPath": "normalizedUrl", "order": "ASCENDING" },
+        { "fieldPath": "flagCount", "order": "DESCENDING" }
+      ]
+    },
+    {
+      "collectionGroup": "flagged_urls",
+      "queryScope": "COLLECTION",
+      "fields": [
+        { "fieldPath": "validatedFlag", "order": "ASCENDING" },
+        { "fieldPath": "weightedScore", "order": "DESCENDING" }
+      ]
+    },
+    {
+      "collectionGroup": "user_flags",
+      "queryScope": "COLLECTION",
+      "fields": [
+        { "fieldPath": "userId", "order": "ASCENDING" },
+        { "fieldPath": "flaggedAt", "order": "DESCENDING" }
+      ]
+    }
+  ],
+  "fieldOverrides": []
+}
