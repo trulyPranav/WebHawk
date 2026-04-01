@@ -40,6 +40,7 @@ class ResultBottomSheet : BottomSheetDialogFragment() {
     private val binding get() = _binding!!
 
     var onFlagClick: (() -> Unit)? = null
+    var onLoginToFlagClick: (() -> Unit)? = null
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -105,6 +106,10 @@ class ResultBottomSheet : BottomSheetDialogFragment() {
         // Flag button
         binding.btnFlag.isVisible = isLoggedIn
         binding.tvLoginToFlag.isVisible = !isLoggedIn
+        binding.tvLoginToFlag.setOnClickListener {
+            onLoginToFlagClick?.invoke()
+            dismiss()
+        }
         binding.btnFlag.setOnClickListener {
             onFlagClick?.invoke()
             binding.btnFlag.isEnabled = false

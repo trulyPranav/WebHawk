@@ -174,6 +174,9 @@ class MainActivity : AppCompatActivity() {
         sheet.onFlagClick = {
             viewModel.flagCurrentUrl()
         }
+        sheet.onLoginToFlagClick = {
+            authLauncher.launch(Intent(this, AuthActivity::class.java))
+        }
         sheet.show(supportFragmentManager, ResultBottomSheet.TAG)
     }
 
