@@ -69,11 +69,11 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
             val flagResult = flagRepo.checkUrl(lastCheckedUrl)
             val flaggedEntry = flagResult.getOrNull()
 
-            if (flaggedEntry != null && flaggedEntry.flagCount > 0) {
-                Log.d(TAG, "  URL is flagged (count=${flaggedEntry.flagCount}) — showing caution")
+            if (flaggedEntry != null && flaggedEntry.flagCount > 0 && flaggedEntry.validatedFlag) {
+                Log.d(TAG, "  URL is validated-flagged (count=${flaggedEntry.flagCount}) — showing caution")
                 _scanState.value = ScanUiState.Flagged(flaggedEntry)
             } else {
-                Log.d(TAG, "  URL clean in DB — starting network scan")
+                Log.d(TAG, "  URL not validated-flagged — starting network scan")
                 startNetworkScan(lastCheckedUrl)
             }
         }
@@ -126,7 +126,9 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
         Log.d(TAG, "  result: level=${result.riskLevel}, finalRisk=${String.format("%.4f", result.finalRisk)}")
 
         lastRiskResult = result
-        val wasFlagged = flagRepo.checkUrl(originalUrl).getOrNull()?.flagCount?.let { it > 0 } ?: false
+        val wasFlagged = flagRepo.checkUrl(originalUrl).getOrNull()?.let {
+            it.flagCount > 0 && it.validatedFlag
+        } ?: false
         _scanState.value = ScanUiState.Result(result, wasFlagged)
     }
 
