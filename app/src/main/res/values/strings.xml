@@ -21,6 +21,6 @@
 
     <!-- Scan states -->
     <string name="checking_database">Checking community flag database…</string>
-    <string name="monitoring_redirects">Monitoring browser redirects…\nOpen the URL in Chrome and navigate.</string>
+    <string name="monitoring_redirects">Monitoring browser redirects…\nPlease wait while we navigate.</string>
     <string name="analyzing">Analyzing redirect chain…</string>
 </resources>
