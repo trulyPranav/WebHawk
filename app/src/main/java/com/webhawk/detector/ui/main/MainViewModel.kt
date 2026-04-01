@@ -42,7 +42,7 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
     private val _scanState = MutableStateFlow<ScanUiState>(ScanUiState.Idle)
     val scanState: StateFlow<ScanUiState> = _scanState.asStateFlow()
 
-    // AccessibilityService is now optional; the default flow does not require it.
+    // AccessibilityService must be enabled before a scan can start.
     val serviceRunning: StateFlow<Boolean> = WebHawkAccessibilityService.serviceRunning
     val isLoggedIn: Boolean get() = authRepo.isLoggedIn
 
@@ -56,6 +56,10 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
     private var scanJob: Job? = null
 
     fun scanUrl(url: String) {
+        if (!serviceRunning.value) {
+            _scanState.value = ScanUiState.Error("Enable Accessibility Service to scan URLs")
+            return
+        }
         if (url.isBlank()) {
             _scanState.value = ScanUiState.Error("Please enter a URL")
             return
@@ -83,6 +87,10 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
      * Called when user taps "Continue Anyway" on the flagged caution screen.
      */
     fun continueWithFlaggedUrl() {
+        if (!serviceRunning.value) {
+            _scanState.value = ScanUiState.Error("Enable Accessibility Service to scan URLs")
+            return
+        }
         startNetworkScan(lastCheckedUrl)
     }
 

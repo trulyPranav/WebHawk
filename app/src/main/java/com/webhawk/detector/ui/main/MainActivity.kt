@@ -99,6 +99,8 @@ class MainActivity : AppCompatActivity() {
             repeatOnLifecycle(Lifecycle.State.STARTED) {
                 viewModel.serviceRunning.collect { running ->
                     binding.cardServiceWarning.isVisible = !running
+                    binding.btnScan.isEnabled = running
+                    binding.etUrl.isEnabled = running
                 }
             }
         }
